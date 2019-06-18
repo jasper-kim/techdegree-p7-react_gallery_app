@@ -14,7 +14,8 @@ class App extends Component {
   state = {
     search: [],
     title: '',
-    isLoading: true
+    firstLoading: true,
+    searchLoading: true
   }
 
   componentDidMount() {
@@ -25,7 +26,7 @@ class App extends Component {
     const prevPath = prevProps.location.pathname;   //get previous path
     const thisPath = this.props.location.pathname; //getcurrent path
     
-    if (thisPath.indexOf('/search/') > -1) {
+    if (thisPath.includes('/search/')) {
       if (thisPath !== prevPath) {
         const query = thisPath.replace('/search/', '');
         this.getFlickr(query);
@@ -34,14 +35,14 @@ class App extends Component {
   }
 
   getFlickr = (query = 'supercar') => {
-    this.setState({isLoading: true});
+    this.setState({searchLoading: true});
 
-    fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${query}&per_page=20&format=json&nojsoncallback=1`)
+    fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=20&format=json&nojsoncallback=1`)
       .then(res => res.json())
       .then(resData => {
         this.setState({
           search: resData.photos.photo,
-          isLoading: false,
+          searchLoading: false,
           title: query
         });
       })
@@ -52,17 +53,30 @@ class App extends Component {
 
   initialLoad = (queries) => {
     const apiRequest = [];
+    let responses = [];
+    const thisPath = this.props.location.pathname;
 
     for(let i = 0; i < queries.length; i++) {
       apiRequest[i] = 
-        fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${queries[i]}&per_page=20&format=json&nojsoncallback=1`)
+        fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${queries[i]}&per_page=20&format=json&nojsoncallback=1`)
           .then(res => res.json());
     }
 
     Promise.all(apiRequest)
       .then(responseData => {
+
         for (let i = 0; i < queries.length; i++) {
-          this.handlePhotoResponse(queries[i], responseData[i]);
+          responses[i] = this.handlePhotoResponse(queries[i], responseData[i]);
+        }
+
+        this.setState({
+          firstLoading:false
+        })
+      })
+      .then(() => {
+        if(thisPath.includes('/search/')) {
+          const query = thisPath.replace('/search/', '');
+          this.getFlickr(query)
         }
       })
       .catch(error => {
@@ -73,7 +87,6 @@ class App extends Component {
   handlePhotoResponse(searchName, imageData) {
     this.setState({
       [searchName]: imageData.photos.photo,
-      isLoading: false
     })
   }
 
@@ -84,11 +97,11 @@ class App extends Component {
         <Route render={(props) => <Header performSearch={this.getFlickr}/>} />
         
         <Switch>
-          <Route exact path='/' render={() => (this.state.isLoading) ? <p>Loading...</p> : <PhotoList title="supercar" data={this.state.supercar} />} />
-          <Route path='/ferrari' render={() => (this.state.isLoading) ? <p>Loading...</p> : <PhotoList title="ferrari" data={this.state.ferrari}/>} />
-          <Route path='/lamborghini' render={() => (this.state.isLoading) ? <p>Loading...</p> : <PhotoList title="lamborghini" data={this.state.lamborghini}/>} />
-          <Route path='/mclaren' render={() => (this.state.isLoading) ? <p>Loading...</p> : <PhotoList title="mclaren" data={this.state.mclaren}/>} />
-          <Route path='/search' render={() => (this.state.isLoading) ? <p>Loading...</p> : <PhotoList title={this.state.title} data={this.state.search} />} />
+          <Route exact path='/' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="supercar" data={this.state.supercar} />} />
+          <Route path='/ferrari' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="ferrari" data={this.state.ferrari}/>} />
+          <Route path='/lamborghini' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="lamborghini" data={this.state.lamborghini}/>} />
+          <Route path='/mclaren' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="mclaren" data={this.state.mclaren}/>} />
+          <Route path='/search' render={() => (this.state.searchLoading) ? <p>Loading...</p> : <PhotoList title={this.state.title} data={this.state.search} />} />
           <Route component={NotFound} />
         </Switch>
         
