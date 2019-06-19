@@ -1,3 +1,27 @@
+# techdegree-p7-React Gallery App
+
+## What it is
+This is the seventh project while studying Full Stack JavaScript techdegree at Treehouse.
+In this project, I use React.js to build a web app displaying a list of photos as a user's request. Because the photos are from Flickr API, users need to have their own API key. I will explain more about it in the following section. This app's name is **Famous Motor Gallery**. As you can imagine, the app lists photos of beautiful cars as default on the page. Also, there are nav buttons to render components with the data loaded when the page is initialized. If users want more, they can use the search form to get new photos.
+
+## How it works
+When loading the page, the React app renders components according to the Routes and requests JSON data to Flickr API. Once the promises are fulfilled and the data is ready, the app updates the state object and render the components again with the new state. After that, users can navigate between nav buttons without updating the state. However, when users submit the search form, the app fetches the source URL with the search keyword as a parameter. While waiting for the request resolved, the page indicates "Loading" message and updates the state object and so on.
+
+If the search request returns nothing, the page displays "No Result and please try again" message. Also, if users enter not existing Routes, it will show 404 error page to them. 
+
+## Flickr API Key
+As I mentioned before, users should have an API key. Please visit Flickr(https://www.flickr.com/services/api/misc.api_keys.html) and apply for a non-commercial API key. Users need to create an account if they don't have it. Then, users set config.js file in the src folder. The config.js file should look like this
+```javascript
+const apiKey = 'YOUR API KEY';
+export default apiKey;
+```
+
+## Changes in index.css
+* shadow in h1
+* Background color in body
+* Font
+* Colors in nav
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
