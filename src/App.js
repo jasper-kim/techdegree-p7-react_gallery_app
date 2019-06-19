@@ -4,6 +4,7 @@ import {
   Route
 } from 'react-router-dom';
 
+//Imports components
 import Header from './Components/Header';
 import PhotoList from './Components/PhotoList';
 import NotFound from './NotFound';
@@ -19,13 +20,15 @@ class App extends Component {
   }
 
   componentDidMount() {
+    //Set default topics to display a list of photos on main page
     this.initialLoad(['supercar', 'ferrari', 'lamborghini', 'mclaren']);
   }
 
   componentDidUpdate(prevProps) {
-    const prevPath = prevProps.location.pathname;   //get previous path
-    const thisPath = this.props.location.pathname; //getcurrent path
+    const prevPath = prevProps.location.pathname; //get previous path
+    const thisPath = this.props.location.pathname; //get current path
     
+    //This lines of code allows a user to navigate between search results
     if (thisPath.includes('/search/')) {
       if (thisPath !== prevPath) {
         const query = thisPath.replace('/search/', '');
@@ -33,8 +36,13 @@ class App extends Component {
       }
     }
   }
-
-  getFlickr = (query = 'supercar') => {
+  /**
+   * This method is called either when a user submits a search form or refresh an URL of search result.
+   * It sends a request with the given search keyword, then updates state object with the data in response from Flickr api
+   * 
+   * @param {string} query - a keyword entered in the Search Form. 
+   */
+  getFlickr = (query) => {
     this.setState({searchLoading: true});
 
     fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=20&format=json&nojsoncallback=1`)
@@ -51,17 +59,25 @@ class App extends Component {
       });
   }
 
+  /**
+   * This method called right after the render method is called to update the state object with the data of default topics
+   * It also checks if the URL has 'search' path. If so, it will pass a keyworld in the URL to getFlickr method.
+   * 
+   * @param {array} queries - an array of default topic strings 
+   */
   initialLoad = (queries) => {
     const apiRequest = [];
     let responses = [];
     const thisPath = this.props.location.pathname;
 
+    //Loops through the array to create variables fetching the Flickr api 
     for(let i = 0; i < queries.length; i++) {
       apiRequest[i] = 
         fetch(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${queries[i]}&per_page=20&format=json&nojsoncallback=1`)
           .then(res => res.json());
     }
 
+    //Once all promises are fulfilled, update the state object with the data in responses from Flickr api
     Promise.all(apiRequest)
       .then(responseData => {
 
@@ -73,6 +89,7 @@ class App extends Component {
           firstLoading:false
         })
       })
+      //If the current URL is search path, request and display the data
       .then(() => {
         if(thisPath.includes('/search/')) {
           const query = thisPath.replace('/search/', '');
@@ -84,6 +101,12 @@ class App extends Component {
       });
   }
 
+  /**
+   * This method is called inside of initialLoad method after all promises successfully get responsed.
+   * It updates the state object with the data returned from Flickr api
+   * @param {string} searchName - a term used when fetching URL
+   * @param {json} imageData - json object from Flickr
+   */
   handlePhotoResponse(searchName, imageData) {
     this.setState({
       [searchName]: imageData.photos.photo,
@@ -112,5 +135,3 @@ class App extends Component {
 }
 
 export default App;
-
-

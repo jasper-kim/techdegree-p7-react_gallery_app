@@ -2,7 +2,11 @@ import React, {Component} from 'react';
 import { withRouter } from 'react-router-dom';
 
 class SearchForm extends Component {
-    
+    /**
+     * This method is excuted when an user submits the search form.
+     * It passes the given keyword to a method in the App.js to fetch URL and update the state object with the data from Flickr.
+     * Also, It redirects an user to another route, with URL contains the search keyword as a parameter.
+     */
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.onSearch(this.query.value);
