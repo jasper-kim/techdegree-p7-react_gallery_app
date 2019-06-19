@@ -1,7 +1,13 @@
 body {
   text-align: center;
-  font-family: 'Open Sans', sans-serif;
-  color: #3f4850;
+  font-family: 'Playfair Display', serif;
+  color: #FFFFFF;
+  background-color: #181618;
+}
+
+h1 {
+  font-size: 2.5em;
+  text-shadow: 0 0 20px #FF005B;
 }
 
 h2 {
@@ -27,7 +33,7 @@ a {
 
 .search-form button {
   outline: none;
-  background-color: #438bbd;
+  background-color: #E10925;
   border: none;
   padding: 0px 15px;
   border-radius: 0 0.35em 0.35em 0;
@@ -52,16 +58,17 @@ input {
 
 .main-nav a {
   display: block;
-  background: #438bbd;
+  background: #FFEB00;
   border-radius: 3px;
   padding: 5px;
-  color: #fff;
+  color: #E10925;
+  font-weight: bold;
 }
 
 .main-nav .active,
 .main-nav a:hover,
 .search-form button:hover {
-  background-color: #275270;
+  background-color: #00934D;
 }
 
 .photo-container ul {
@@ -101,11 +108,18 @@ input {
   .photo-container li {
     margin: auto;
   }
+  .main-nav ul {
+    display: flex;
+    justify-content: center;
+  }
+  .main-nav li {
+    margin: 10px;
+  }
 }
 
 @media only screen and (min-width: 768px)  {
   body {
-    padding-top: 4em;
+    padding-top: 2em;
   }
 
   .container {
@@ -120,6 +134,6 @@ input {
   
   .main-nav li {
     margin: 10px;
-    width: 100px;
+    width: 140px;
   }
 }
