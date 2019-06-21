@@ -16,7 +16,7 @@ class App extends Component {
     search: [],
     title: '',
     firstLoading: true,
-    searchLoading: true
+    searchLoading: false
   }
 
   componentDidMount() {
@@ -115,21 +115,22 @@ class App extends Component {
 
   render() {
     return (
-      
         <div className="container">
-        <Route render={(props) => <Header performSearch={this.getFlickr}/>} />
+        <Route render={() => <Header performSearch={this.getFlickr}/>} />
         
-        <Switch>
-          <Route exact path='/' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="supercar" data={this.state.supercar} />} />
-          <Route path='/ferrari' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="ferrari" data={this.state.ferrari}/>} />
-          <Route path='/lamborghini' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="lamborghini" data={this.state.lamborghini}/>} />
-          <Route path='/mclaren' render={() => (this.state.firstLoading) ? <p>Loading...</p> : <PhotoList title="mclaren" data={this.state.mclaren}/>} />
-          <Route path='/search' render={() => (this.state.searchLoading) ? <p>Loading...</p> : <PhotoList title={this.state.title} data={this.state.search} />} />
-          <Route component={NotFound} />
-        </Switch>
-        
+        { /*If the app is fetching new data, it will display a loading indicator. */
+          this.state.firstLoading || this.state.searchLoading ? <p>Loading... We are working!</p> : (
+            <Switch>
+              <Route exact path='/' render={() => <PhotoList title="supercar" data={this.state.supercar} />} />
+              <Route path='/ferrari' render={() => <PhotoList title="ferrari" data={this.state.ferrari}/>} />
+              <Route path='/lamborghini' render={() => <PhotoList title="lamborghini" data={this.state.lamborghini}/>} />
+              <Route path='/mclaren' render={() => <PhotoList title="mclaren" data={this.state.mclaren}/>} />
+              <Route path='/search' render={() => <PhotoList title={this.state.title} data={this.state.search} />} />
+              <Route component={NotFound} />
+            </Switch>
+          )
+        }
         </div>
-      
     );
   }
 }
